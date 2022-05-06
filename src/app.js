@@ -108,10 +108,10 @@ app.post('/login',auth,async (req, res) => {
 })
 
 // find by id students data
-app.get('/users/:id',async (req,res)=>{
+app.get('/users/:email',async (req,res)=>{
     try {
-        const _id = req.params.id;
-        const data = await UserDetails.findById(_id);
+        const email = req.params.email;
+        const data = await UserDetails.findOne({email});
         console.log(data);
         if(!data){
             return res.status(404).send("issues");
@@ -127,11 +127,11 @@ app.get('/users/:id',async (req,res)=>{
 })
 
 // update using id
-app.patch('/users/:id',async(req,res)=>{
+app.patch('/users/:email',async(req,res)=>{
     try {
 
-        const _id = req.params.id;
-        const up = await UserDetails.findByIdAndUpdate(_id,req.body,{
+        const email = req.params.email;
+        const up = await UserDetails.findOneAndUpdate(email,req.body,{
             new:true
         });
       
@@ -141,19 +141,19 @@ app.patch('/users/:id',async(req,res)=>{
     }
 })
 // delete any elements
-app.delete('/users/:id',async(req,res)=>{
+app.delete('/users/:email',async(req,res)=>{
     try {
-        
-        const del = await UserDetails.findByIdAndDelete(req.params.id);
+        const email = req.params.email;
+        const del = await UserDetails.findOneAndDelete({"email":email});
         if(!del){
-            return res.status(400).send("server error");
+            return res.status(400).send("invalid id");
         }
         else{
-            res.send(`${del.name} deleted successfully`);
+            res.send(` deleted successfully`);
         }
 
     } catch (error) {
-        res.status(500).send(error);
+        res.status(500).send(error.message);
     }
 })
 
@@ -207,7 +207,7 @@ app.delete('/config/:email',async(req,res)=>{
     try {
         
         const email = req.params.email;
-        const del = await configDetails.deleteOne({"email":email});
+        const del = await configDetails.findOneAndDelete({"email":email});
         if(!del){
             return res.status(400).send("server error");
         }
@@ -285,7 +285,7 @@ app.delete('/device/:email',async(req,res)=>{
     try {
         
         const email = req.params.email;
-        const del = await Device_table.deleteOne({"email":email});
+        const del = await Device_table.findOneAndDelete({"email":email});
         if(!del){
             return res.status(400).send("server error");
         }
@@ -351,7 +351,7 @@ app.delete('/temperature/:email',async(req,res)=>{
     try {
         
         const email = req.params.email;
-        const del = await temperatureReadings.deleteOne({"email":email});
+        const del = await temperatureReadings.findOneAndDelete({"email":email});
         if(!del){
             return res.status(400).send("server error");
         }
@@ -421,7 +421,7 @@ app.delete('/family/:email',async(req,res)=>{
     try {
         
         const email = req.params.email;
-        const del = await familyDetails.deleteOne({"email":email});
+        const del = await familyDetails.findOneAndDelete({"email":email});
         if(!del){
             return res.status(400).send("server error");
         }
